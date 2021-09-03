@@ -28,8 +28,6 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
-
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
     Using DOM methods and properties, create and return the following markup:
@@ -58,3 +56,87 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+//Axios GET request
+// const res = axios.get('https://api.github.com/users/ShanaeL29')
+//.then (res => console.log(res)) //.then takes a callback function with a paramater response and then do something with the response
+//.catch(err => console.error(err))//something
+
+// axios.get('https://api.github.com/users/ShanaeL29')
+//   .then (res => console.log(res))
+//   .catch(err => console.error(err))
+
+function getGithubUser(name) {
+  axios
+    .get(`https://api.github.com/users/${name}`)
+    .then((res) => {
+      const userCard = userCardMaker(res.data);
+      console.log(res);
+      document.querySelector(".cards").appendChild(userCard);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+getGithubUser("ShanaeL29");
+
+//Create follower cards and append to DOM
+const followersArray = [
+  "tetondan",
+  "dustinmyers",
+  "justsml",
+  "luishrd",
+  "bigknell",
+];
+
+followersArray.forEach((follower) => {
+  getGithubUser(follower);
+});
+
+//Create component
+function userCardMaker(user) {
+  //Instantiate Elements
+  const card = document.createElement("div");
+  const imageURL = document.createElement("img");
+  const cardInfo = document.createElement("div");
+  const usersName = document.createElement("h3");
+  const username = document.createElement("p");
+  const location = document.createElement("p");
+  const profile = document.createElement("p");
+  const linkAddress = document.createElement("a");
+  const followers = document.createElement("p");
+  const following = document.createElement("p");
+  const bio = document.createElement("p");
+
+  //Set hierarchy (parent/child relationships)
+  profile.textContent = `Profile:`;
+  card.appendChild(imageURL);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(usersName);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+  cardInfo.appendChild(bio);
+  profile.appendChild(linkAddress);
+
+  //Assign classes
+  card.classList.add("card");
+  cardInfo.classList.add("card-info");
+  usersName.classList.add("name");
+  username.classList.add("username");
+
+  //Content
+  imageURL.setAttribute("src", `${user["avatar_url"]}`);
+  usersName.textContent = `Name: ${user["name"]}`;
+  username.textContent = `UserID: ${user["login"]}`;
+  location.textContent = `Location: ${user["location"]}`;
+  linkAddress.setAttribute("href", `${user["html_url"]}`);
+  linkAddress.textContent = user["html_url"];
+  followers.textContent = `Followers: ${user["followers"]}`;
+  following.textContent = `Following: ${user["following"]}`;
+  bio.textContent = `Bio: ${user["bio"]}`;
+
+  return card;
+}
